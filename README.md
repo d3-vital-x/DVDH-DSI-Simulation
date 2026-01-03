@@ -1,55 +1,107 @@
-# $\mathbf{DVDH-DSI-Simulation}$: Dimensional Singularity Instability
+# DVDH–DSI–Simulation  
+## Dimensional Singularity Instability — Microphysical Simulation Framework
 
-This repository contains the core computational model for the $\mathbf{DVDH}$ microphysics, focusing on the mechanism of $\mathbf{DSI}$ (Dimensional Singularity Instability) and RCN (Relevant Coupling Network) which drives Spatio-Temporal collapse.
+This repository contains the core microphysical simulation framework supporting the **Dark Vital Dimensional Hypothesis (DVDH)**.  
+It focuses on the **Dimensional Singularity Instability (DSI)** mechanism as a *phenomenological microphysical construct* used to **theoretically constrain** selected cosmological parameters within the DVDH framework.
 
-The primary goal is to **theoretically constrain** the cosmological parameters ($\mathbf{\alpha}$ and $\mathbf{\epsilon}$) used in the $\mathbf{DVDH-Cosmology-Project}$ via microscopic physics.
-
----
-
-## 🔬 The Core Physics: DSI Mechanism
-
-The model simulates the instability created by the coupling of **MCF** (Magnetic Component Flux) and **SEVB** (Spacetime Energy Wave Burst).
-
-The **Dimensional Singularity Instability ($\mathbf{DSI}$)** function is defined as:
-
-$$\mathbf{DSI(R, T) = \gamma \times MCF(R, T) \times SEVB(R, T)}$$
-
-### Critical Collapse Condition
-
-Collapse of Spacetime occurs when the instability exceeds a critical threshold ($\mathbf{D_{\text{crit}}}$):
-$$\mathbf{DSI \ge D_{\text{crit}}} \quad (\text{where } D_{\text{crit}} = 1.0 \times 10^{-1} \text{ in simulation units})$$
+> **Scope Notice**  
+> This codebase does not claim empirical validation. It is intended as a numerical consistency and parameter-bridging tool that complements the formal analytical derivations presented in the main DVDH monograph.
 
 ---
 
-## 🗂 Project Structure
+## Physical Motivation (Claim Classification)
 
-| Folder | Purpose | Key Content |
-| :--- | :--- | :--- |
-| `01_SIM_CORE/` | **Core Simulation Engine** | `dsi_solver.py`, `mcf_sevb_functions.py` |
-| `02_VISUALS/` | Simulation Output Plots | `DSI_Instability_Profile.png`, `Energy_Density_Map.png` |
-| `03_PARAMETER_GRID/` | **Parameter Space Mapping** | Input grid for $\mathbf{B}_0, \mathbf{S}_0, \mathbf{\gamma}$ values. |
-| `04_COUPLING_ANALYSIS/` | **Bridging Functions** | Scripts to derive $\mathbf{\alpha}$ and $\mathbf{\epsilon}$ from simulation results. |
+- **[C1] Established Reference**  
+  Field coupling, instability growth, and threshold-driven collapse are modeled using standard numerical techniques common in nonlinear field dynamics.
 
----
+- **[C2] DVDH Theoretical Extension**  
+  The **DSI mechanism** is introduced as an *effective instability construct* arising from the coupling of:  
+  • **MCF** — Magnetic Component Flux  
+  • **SEVB** — Spacetime Energy Wave Burst  
 
-## 🔗 Linking to Cosmology (Parameter Constraint)
-
-The simulation results provide the theoretical values for the $\mathbf{DVDH}$ scaling parameters:
-
-| Microscopic Result | Cosmological Parameter Constrained |
-| :---: | :---: |
-| $\mathbf{DSI_{\text{mean}}}$ / $\mathbf{DSI_{\text{max}}}$ | $\mathbf{\alpha}$ (Dimensional Index) |
-| $\mathbf{R_{\text{collapse}}}$ / $\mathbf{T_{\text{collapse}}}$ | $\mathbf{\epsilon}$ (Vital Decay Factor) |
-
-This link validates the $\mathbf{DVDH}$ cosmological model using fundamental physics inputs.
+- **[C3] Speculative Boundary**  
+  DSI is treated strictly as a simulation-level instability proxy and **not** as a confirmed physical entity.
 
 ---
 
-## 🚀 How to Run the Simulation
+## Core Instability Definition
 
-```bash
-# 1️⃣ Run the DSI simulation grid
-python 01_SIM_CORE/dsi_solver.py
+The Dimensional Singularity Instability is modeled as:
 
-# 2️⃣ Analyze grid results and derive alpha/epsilon
-python 04_COUPLING_ANALYSIS/derive_cosmo_params.py
+DSI(R, T) = γ × MCF(R, T) × SEVB(R, T)
+
+where γ is a dimensionless coupling strength.
+
+---
+
+## Collapse Threshold (Simulation Criterion)
+
+A collapse-like instability regime is identified when:
+
+DSI ≥ D_crit  
+
+with  
+
+D_crit = 1.0 × 10⁻¹  (simulation units)
+
+This threshold is **model-defined** and serves as a numerical marker for regime transition, not as an observational claim.
+
+---
+
+## Repository Structure
+
+01_SIM_CORE/  
+• Core simulation engine  
+• dsi_solver.py  
+• mcf_sevb_functions.py  
+
+02_VISUALS/  
+• Generated instability and energy-density maps  
+
+03_PARAMETER_GRID/  
+• Parameter sweeps over B₀, S₀, γ  
+
+04_COUPLING_ANALYSIS/  
+• Bridging scripts mapping simulation outputs to cosmological parameters  
+
+---
+
+## Parameter Bridging to DVDH Cosmology
+
+Simulation outputs are mapped to DVDH scaling parameters as follows:
+
+- DSI_mean / DSI_max → α (Dimensional Index)  
+- R_collapse / T_collapse → ε (Vital Decay Factor)  
+
+These mappings serve as **theoretical consistency constraints**, supporting the analytical results derived in Chapters 5–7 of the DVDH derivation framework.
+
+---
+
+## Observability & Testability Flag
+
+- Directly Testable: No  
+- Indirect Signatures: Possible  
+- Simulation Feasible: Yes  
+- Observational Analogues: None claimed  
+
+---
+
+## How to Run
+
+1. Run the DSI simulation grid  
+   python 01_SIM_CORE/dsi_solver.py  
+
+2. Derive cosmological parameters  
+   python 04_COUPLING_ANALYSIS/derive_cosmo_params.py  
+
+---
+
+## Risk Statement
+
+This simulation contains speculative constructs beyond current experimental verification and is presented to guide hypothesis-driven exploration within the DVDH framework.
+
+---
+
+## License
+
+MIT License — see LICENSE file.
