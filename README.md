@@ -48,7 +48,7 @@ DSI ≥ D_crit
 
 with:
 
-D_crit = 1.0 × 10⁻¹
+D_crit = 1.0 × 10⁻¹  
 
 (simulation units)
 
@@ -58,19 +58,13 @@ This threshold is **model-defined** and serves as a numerical marker for regime 
 
 ## Repository Structure
 
-01_SIM_CORE/  
-├─ dsi_solver.py  
-├─ mcf_sevb_functions.py  
+01_SIM_CORE/ ├─ dsi_solver.py ├─ mcf_sevb_functions.py
 
-02_VISUALS/  
-├─ DSI_Instability_Profile.png  
-├─ Energy_Density_Map.png  
+02_VISUALS/ ├─ DSI_Instability_Profile.png ├─ Energy_Density_Map.png
 
-03_PARAMETER_GRID/  
-├─ parameter_grid_inputs.py  
+03_PARAMETER_GRID/ ├─ parameter_grid_inputs.py
 
-04_COUPLING_ANALYSIS/  
-├─ derive_cosmo_params.py  
+04_COUPLING_ANALYSIS/ ├─ derive_cosmo_params.py
 
 ---
 
@@ -99,11 +93,20 @@ These mappings serve as **theoretical consistency constraints**, supporting the 
 ### 1. Run the DSI simulation grid
 ```bash
 python 01_SIM_CORE/dsi_solver.py
+
 2. Derive cosmological parameters
-Copy code
-Bash
+
 python 04_COUPLING_ANALYSIS/derive_cosmo_params.py
+
+---
+
 Risk Statement
+
 This simulation contains speculative constructs beyond current experimental verification and is presented to guide hypothesis-driven exploration within the DVDH framework.
+
+
+---
+
 License
+
 MIT License — see the LICENSE file for details.
