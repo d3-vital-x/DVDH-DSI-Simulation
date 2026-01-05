@@ -59,18 +59,18 @@ This threshold is **model-defined** and serves as a numerical marker for regime 
 ## Repository Structure
 
 01_SIM_CORE/
-├─ dsi_solver.py
-├─ mcf_sevb_functions.py
-│
+- dsi_solver.py
+- mcf_sevb_functions.py
+
 02_VISUALS/
-├─ DSI_Instability_Profile.png
-├─ Energy_Density_Map.png
-│
+- DSI_Instability_Profile.png
+- Energy_Density_Map.png
+
 03_PARAMETER_GRID/
-├─ parameter_grid_inputs.py
-│
+- parameter_grid_inputs.py
+
 04_COUPLING_ANALYSIS/
-├─ derive_cosmo_params.py
+- derive_cosmo_params.py
 
 ---
 
