@@ -59,14 +59,11 @@ This threshold is **model-defined** and serves as a numerical marker for regime 
 ## Repository Structure
 
 01_SIM_CORE/ ├─ dsi_solver.py ├─ mcf_sevb_functions.py
-
 02_VISUALS/ ├─ DSI_Instability_Profile.png ├─ Energy_Density_Map.png
-
 03_PARAMETER_GRID/ ├─ parameter_grid_inputs.py
-
 04_COUPLING_ANALYSIS/ ├─ derive_cosmo_params.py
 
----
+.---
 
 ## Parameter Bridging to DVDH Cosmology
 
@@ -94,19 +91,12 @@ These mappings serve as **theoretical consistency constraints**, supporting the 
 ```bash
 python 01_SIM_CORE/dsi_solver.py
 
-2. Derive cosmological parameters
+.2. Derive cosmological parameters
 
-python 04_COUPLING_ANALYSIS/derive_cosmo_params.py
+.python 04_COUPLING_ANALYSIS/derive_cosmo_params.py
 
----
-
-Risk Statement
-
+.Risk Statement
 This simulation contains speculative constructs beyond current experimental verification and is presented to guide hypothesis-driven exploration within the DVDH framework.
 
-
----
-
-License
-
+.License
 MIT License — see the LICENSE file for details.
