@@ -1,4 +1,4 @@
-```markdown
+markdown
 # DVDH–DSI–Simulation
 
 ## Dimensional Singularity Instability — Microphysical Simulation Framework
