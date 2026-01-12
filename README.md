@@ -1,4 +1,3 @@
-markdown
 # DVDH–DSI–Simulation
 
 ## Dimensional Singularity Instability — Microphysical Simulation Framework
@@ -97,13 +96,14 @@ These mappings serve as theoretical consistency constraints supporting the analy
 ## How to Run
 
 Run the DSI simulation:
-
+```
 python 01_SIM_CORE/dsi_solver.py
+```
 
 Derive cosmological parameters:
-
+```
 python 04_COUPLING_ANALYSIS/derive_cosmo_params.py
-
+```
 ---
 
 ## Risk Statement
