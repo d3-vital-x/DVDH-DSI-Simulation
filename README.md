@@ -22,7 +22,7 @@ This repository provides:
 - MCMC-based statistical analysis of local observational data  
 - Consistency checks against classical gravitational models  
 - Tools for simulating coupled scalar–magnetic field interactions  
-.---
+---
 
 > ⚠️ **Repository Scope Clarification**
 >
@@ -37,7 +37,7 @@ This repository provides:
 ### MCMC Analysis & Parameter Inference
 
 Parameter vector:  
-{ alpha_VX, omega_res, rho_VX, sigma_obs }
+`{ alpha_VX, omega_res, rho_VX, sigma_obs }`
 
 - Robust posterior distributions indicate that an additional non-gravitational coupling is statistically supported by local data.
 - Null-model tests demonstrate that classical dynamics alone cannot reproduce the observed anomalies.
@@ -47,7 +47,7 @@ Parameter vector:
 - Dimensionless normalization (Π-groups) ensures scale-invariant structure.
 - Stability constraints and Lyapunov-derived bounds maintain internal coherence.
 - Exact reduction to General Relativity is recovered in the limit:  
-  alpha → 0, F → 0
+  `alpha → 0, F → 0`
 
 ### Testable Predictions
 
@@ -79,6 +79,7 @@ This repository is structured as a **simulation-focused research environment**.
 - Cross-references to the theory repository are encouraged for full context.
 
 **Summary:**  
+
 Theory repository = formal derivations  
 Simulation repository = MCMC + empirical checks + this README
 
