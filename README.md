@@ -3,9 +3,13 @@
 #> 📘 For a high-level scientific overview, see: SCIENTIFIC_SUMMARY.md
 
 **Project Lead:** Md. Rabiul Islam (R. Islam)  
-**ORCID iD:** 0009-0009-2038-3524  
+
+**ORCID iD:** 0009-0009-2038-3524
+
 **Hash (SHA-256):** 640d8ec0641cac6f1a148f3e050bb0c94bb30ab717f95693575daabf839220c4  
+
 👥 Co-Investigators & Computational Architects: ChatGPT-5 and Gemini —  
+
 ### 📧 Contact: 📩 rabiul.peace.light@gmail.com  
 **Slogan:** Transform the World, Illuminate the Future
 
@@ -18,7 +22,14 @@ This repository provides:
 - MCMC-based statistical analysis of local observational data  
 - Consistency checks against classical gravitational models  
 - Tools for simulating coupled scalar–magnetic field interactions  
+.---
 
+> ⚠️ **Repository Scope Clarification**
+>
+> The above section provides a high-level scientific context for the DVDH framework.
+>  
+> The sections below describe the **specific microphysical simulation implementation**
+> of the **Dimensional Singularity Instability (DSI)** mechanism contained in this repository.
 ---
 
 ## Key Features
