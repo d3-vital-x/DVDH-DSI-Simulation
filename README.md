@@ -1,3 +1,76 @@
+# Dark Vital Dimensional Hypothesis (DVDH) — Scientific Summary
+
+#> 📘 For a high-level scientific overview, see: SCIENTIFIC_SUMMARY.md
+
+**Project Lead:** Md. Rabiul Islam (R. Islam)  
+**ORCID iD:** 0009-0009-2038-3524  
+**Hash (SHA-256):** 640d8ec0641cac6f1a148f3e050bb0c94bb30ab717f95693575daabf839220c4  
+👥 Co-Investigators & Computational Architects: ChatGPT-5 and Gemini —  
+### 📧 Contact: 📩 rabiul.peace.light@gmail.com  
+**Slogan:** Transform the World, Illuminate the Future
+
+## Overview
+
+The Dark Vital Dimensional Hypothesis (DVDH) is a theoretical framework designed to investigate local-scale astrophysical anomalies, specifically those associated with 3I/Tsuchinshan–ATLAS. The framework integrates classical gravitational dynamics with a hypothesized non-gravitational coupling term to account for observed deviations in velocity, UV radiation signatures, and non-gravitational acceleration.
+
+This repository provides:
+- Formal derivations of DVDH field equations  
+- MCMC-based statistical analysis of local observational data  
+- Consistency checks against classical gravitational models  
+- Tools for simulating coupled scalar–magnetic field interactions  
+
+---
+
+## Key Features
+
+### MCMC Analysis & Parameter Inference
+
+Parameter vector:  
+{ alpha_VX, omega_res, rho_VX, sigma_obs }
+
+- Robust posterior distributions indicate that an additional non-gravitational coupling is statistically supported by local data.
+- Null-model tests demonstrate that classical dynamics alone cannot reproduce the observed anomalies.
+
+### Mathematical Consistency
+
+- Dimensionless normalization (Π-groups) ensures scale-invariant structure.
+- Stability constraints and Lyapunov-derived bounds maintain internal coherence.
+- Exact reduction to General Relativity is recovered in the limit:  
+  alpha → 0, F → 0
+
+### Testable Predictions
+
+- Predicts velocity and UV-correlated anomalies consistent with 3I/Tsuchinshan–ATLAS.
+- Framework is explicitly designed for local-scale astrophysical testing rather than cosmological extrapolation.
+
+### Simulation-Ready
+
+- All field equations and MCMC pipelines are implemented for reproducible computational experiments.
+- Corner plots and likelihood diagnostics are included for posterior evaluation.
+
+---
+
+## Purpose
+
+DVDH aims to:
+- Bridge the gap between classical gravitational theory and unexplained local astrophysical anomalies.
+- Provide a mathematically robust, testable, and simulation-ready framework.
+- Offer a foundation for future investigations of dimensionally coupled phenomena in astrophysics.
+
+---
+
+## Recommended Repository Placement
+
+This repository is structured as a **simulation-focused research environment**.
+
+- Formal theory and derivations belong in a separate cosmology or theory repository.
+- This repository contains numerical simulations, MCMC inference, and empirical consistency tests.
+- Cross-references to the theory repository are encouraged for full context.
+
+**Summary:**  
+Theory repository = formal derivations  
+Simulation repository = MCMC + empirical checks + this README
+
 # DVDH–DSI–Simulation
 
 ## Dimensional Singularity Instability — Microphysical Simulation Framework
