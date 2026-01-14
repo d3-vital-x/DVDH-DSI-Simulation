@@ -1,0 +1,14 @@
+cff-version: 1.2.0
+message: "If you use this research framework or simulation code, please cite it as follows."
+authors:
+  - family-names: Islam
+    given-names: Md. Rabiul
+    orcid: "https://orcid.org/0009-0009-2038-3524"
+title: "Dark Vital Dimensional Hypothesis (DVDH) — DSI Simulation Framework"
+version: 0.1.0
+date-released: 2026-01-14
+url: "https://github.com/d3-vital-x/DVDH-DSI-Simulation"
+identifiers:
+  - type: other
+    value: "SHA-256: 640d8ec0641cac6f1a148f3e050bb0c94bb30ab717f95693575daabf839220c4"
+    description: "Bitcoin Blockchain Originality Hash"
