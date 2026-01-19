@@ -180,14 +180,14 @@ These mappings serve as theoretical consistency constraints supporting the analy
 
 ## How to Run
 
-Run the DSI simulation:
-```
-python 01_SIM_CORE/dsi_solver.py
+### Run the DSI simulation
+```bash
+python src/dsi/dsi_solver.py
 ```
 
-Derive cosmological parameters:
+Derive cosmological parameters
 ```
-python 04_COUPLING_ANALYSIS/derive_cosmo_params.py
+python src/analysis/derive_cosmo_params.py
 ```
 ---
 
