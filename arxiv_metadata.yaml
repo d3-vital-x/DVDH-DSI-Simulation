@@ -1,0 +1,15 @@
+title: "A Simulation-Based Consistency Study of the Dark Vital Dimensional Hypothesis"
+authors:
+  - name: Md. Rabiul Islam
+    orcid: 0009-0009-2038-3524
+abstract: |
+  We present a simulation-focused numerical framework designed to test
+  the internal consistency and parameter sensitivity of the Dark Vital
+  Dimensional Hypothesis (DVDH). The framework implements a microphysical
+  instability proxy, MCMC-based inference, and null-model controls without
+  asserting empirical validation.
+categories:
+  - astro-ph.IM
+  - physics.comp-ph
+comments: "Simulation framework only. No empirical or observational claims."
+license: CC-BY-4.0
