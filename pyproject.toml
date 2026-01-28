@@ -1,0 +1,17 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "dvdh-dsi-simulation"
+version = "0.1.0"
+description = "DVDH Dimensional Stress Index Simulation"
+authors = [{ name = "Md. Ra-bi-ul Islam" }]
+readme = "README.md"
+requires-python = ">=3.9"
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[tool.setuptools.packages.find]
+where = ["src"]
