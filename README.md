@@ -1,3 +1,8 @@
+![CI](https://github.com/d3-vital-x/DVDH-DSI-Simulation/actions/workflows/ci.yml/badge.svg)
+
+> This record establishes an independently developed and timestamped
+> archival reference for the DVDH / DSI computational framework.
+
 # Dark Vital Dimensional Hypothesis (DVDH) — Scientific Summary
 
 #> 📘 For a high-level scientific overview, see: SCIENTIFIC_SUMMARY.md
@@ -6,6 +11,13 @@
 
 **ORCID iD:** 0009-0009-2038-3524
 
+### 📌 Archival Record (Zenodo)
+
+**DOI:**  
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.18360261.svg)](https://doi.org/10.5281/zenodo.18360261)
+
+**Zenodo Record:**  
+https://zenodo.org/records/18360261
 **Hash (SHA-256):** 640d8ec0641cac6f1a148f3e050bb0c94bb30ab717f95693575daabf839220c4  
 
 👥 Co-Investigators & Computational Architects: ChatGPT-5 and Gemini —  
