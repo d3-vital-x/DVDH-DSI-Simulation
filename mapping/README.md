@@ -56,3 +56,24 @@ and do not imply physical reinterpretation.
 ## Example (Conceptual)
 
 CIAO output:
+
+---
+
+## Reproducibility Statement
+
+Any user may bypass this mapping layer entirely
+and operate directly on CIAO or CSC 2.1 outputs.
+
+This module exists solely to standardize numerical
+interfaces for simulation workflows.
+
+---
+
+## Compliance
+
+- Compatible with Chandra CIAO
+- Compatible with CSC 2.1 catalog quantities
+- No dependency on proprietary datasets
+- No modification of raw observational data
+
+---
