@@ -209,6 +209,12 @@ This simulation contains speculative constructs beyond current experimental veri
 
 ---
 
+This repository intentionally separates observational ingestion,
+candidate selection, and theoretical simulation layers to allow
+independent validation using either catalog-level or raw telescope data.
+
+---
+
 ## License
 
 MIT License — see the LICENSE file for details.
