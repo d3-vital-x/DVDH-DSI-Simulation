@@ -1,36 +1,24 @@
-# ciao_to_dvdh.py
-# Pure mathematical feature adapter
-# CIAO / CSC 2.1  →  DVDH / DSI space
+# Version: v0.4-neutral-adapter
+# Updated: mission-agnostic mapping compatibility (2026-02)
 
 import math
+from mapping.neutral_interface import neutral_observable_vector
 
 def rank_transform(x, xmin=1, xmax=10):
-    """
-    Rank-like normalization for variability index.
-    Assumes CSC-style discrete variability scale.
-    """
+    """ Rank-like normalization for variability index. """
     x = max(min(x, xmax), xmin)
     return (x - xmin) / (xmax - xmin)
 
-def map_ciao_to_dvdh(
-    flux_2_7_keV,
-    hard_hm,
-    var_index
-):
+def map_ciao_to_dvdh(flux_2_7_keV, hard_hm, var_index):
     """
-    Non-invasive feature mapping.
-    Raw observational meaning is preserved.
+    Chandra-specific mapping producing a Neutral Observable Vector (NOV).
     """
-
-    features = {}
-
-    # Energy flux normalization (log space)
-    features["E_flux_norm"] = math.log10(flux_2_7_keV)
-
-    # Spectral hardness proxy (identity map)
-    features["spectral_tension"] = hard_hm
-
-    # Temporal instability (rank-normalized)
-    features["temporal_instability"] = rank_transform(var_index)
-
-    return features
+    f_energy = math.log10(flux_2_7_keV) if flux_2_7_keV > 0 else -15.0
+    h_spectral = hard_hm
+    t_variation = rank_transform(var_index)
+    
+    return neutral_observable_vector(
+        F_energy=f_energy,
+        H_spectral=h_spectral,
+        T_variation=t_variation
+    )
