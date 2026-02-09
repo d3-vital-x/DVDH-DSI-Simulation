@@ -9,3 +9,8 @@ It is intended for internal analysis, reproducibility, and exploratory inspectio
 All displayed quantities originate from simulated or processed data within this repository.
 
 ---
+
+### Time Window Notice
+The countdown reflects a predefined diagnostic observation window and does not imply the occurrence, prediction, or expectation of any physical event.
+
+---
