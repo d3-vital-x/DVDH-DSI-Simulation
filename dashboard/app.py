@@ -1,11 +1,14 @@
 # DVDH Live Signal Analysis Dashboard
-# Streamlit Skeleton v0.1
-# Purpose: Public, reproducible observational visualization
+# Streamlit Skeleton v0.2
+# Purpose: Public, reproducible diagnostic visualization
+# Scope: No observational or physical claim
 # Slogan: Transforming Theories, Illuminating Singularities
 
 import streamlit as st
 import datetime
 import time
+
+from countdown import get_countdown_state
 
 # -----------------------------
 # Page Configuration
@@ -23,88 +26,66 @@ st.subheader("Transforming Theories, Illuminating Singularities")
 
 st.markdown(
     """
-    **Scope:**  
-    Public, model-agnostic visualization of observational signal structure.  
-    This dashboard presents diagnostic metrics only and makes no a priori claims.
+    **Scope Notice**  
+    This dashboard provides *diagnostic visualization only*.  
+    It does **not** constitute an observational claim or discovery.
     """
 )
 
 st.divider()
 
 # -----------------------------
-# Countdown Timer Section
+# Countdown Section
 # -----------------------------
 st.header("⏳ Live Observation Countdown")
 
-TARGET_DATE = datetime.datetime(2026, 2, 15, 0, 0, 0)
+state = get_countdown_state()
 
-now = datetime.datetime.utcnow()
-remaining = TARGET_DATE - now
-
-if remaining.total_seconds() > 0:
-    days = remaining.days
-    hours, remainder = divmod(remaining.seconds, 3600)
-    minutes, seconds = divmod(remainder, 60)
-
+if state["state"] == "PRE_WINDOW":
     st.metric(
-        label="Time Remaining (UTC)",
-        value=f"{days}d {hours}h {minutes}m {seconds}s"
+        label="Observation Window Status (UTC)",
+        value=f"PRE-WINDOW",
+        delta=f"{state['days_remaining']} days remaining"
     )
+
+elif state["state"] == "LIVE_WINDOW":
+    st.success("🟢 Observation window is LIVE (15–22 Feb 2026)")
+
 else:
-    st.success("Observation window is now active.")
+    st.info("🔵 Observation window has ended")
 
 st.divider()
 
 # -----------------------------
-# Layout Columns
+# Dashboard Layout
 # -----------------------------
 col1, col2 = st.columns(2)
 
 # -----------------------------
-# ΛCDM vs DVDH Accuracy Meter (Placeholder)
+# Left Panel — Model Accuracy Meter
 # -----------------------------
 with col1:
-    st.header("📊 Model Fit Comparison")
-    st.info("ΛCDM vs DVDH accuracy meter will appear here.")
-    st.progress(0)
+    st.subheader("📊 ΛCDM vs DVDH Accuracy Meter")
+
+    st.progress(0.0)
+    st.caption(
+        "Placeholder meter. "
+        "Will reflect normalized residual dominance once live ingestion is enabled."
+    )
 
 # -----------------------------
-# Θ_obs (DSI Projection) Tracker (Placeholder)
+# Right Panel — DSI / Fibonacci Tracker
 # -----------------------------
 with col2:
-    st.header("📐 Dimensional Stability Projection (Θ_obs)")
-    st.info("Live Θ_obs tracking will appear here.")
-    st.line_chart([])
+    st.subheader("🧭 Θ_obs & Fibonacci Signal Tracker")
 
-st.divider()
+    st.info(
+        "Temporal ratio analysis panel.\n\n"
+        "This section evaluates **relative spacing only** "
+        "and does not rely on signal amplitude."
+    )
 
-# -----------------------------
-# Temporal Ratio / Fibonacci Analysis Panel
-# -----------------------------
-st.header("🌀 Temporal Ratio Structure Analysis")
-st.info("Spike spacing and ratio diagnostics will be visualized here.")
-
-st.divider()
-
-# -----------------------------
-# Residuals Panel
-# -----------------------------
-st.header("📉 ΛCDM vs DVDH Residuals")
-st.info("Residual comparison plots will be displayed here.")
-
-st.divider()
-
-# -----------------------------
-# Verification Badge Section
-# -----------------------------
-st.header("🔐 Data Integrity & Verification")
-
-st.markdown(
-    """
-    - Dataset hashes and timestamps are recorded for reproducibility.
-    - Blockchain anchoring (if enabled) ensures immutability.
-    """
-)
+    st.caption("Fibonacci ratio target: ~1.618")
 
 st.divider()
 
@@ -112,6 +93,11 @@ st.divider()
 # Footer
 # -----------------------------
 st.caption(
-    "DVDH Project • Public Observational Dashboard • "
-    "No proprietary data • No parameter tuning"
+    "DVDH–DSI Simulation Project • MIT License • Diagnostic Visualization Only"
 )
+
+# -----------------------------
+# Auto Refresh (Lightweight)
+# -----------------------------
+time.sleep(1)
+st.experimental_rerun()
