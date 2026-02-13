@@ -135,6 +135,9 @@ recipient_email = st.text_input("Recipient Email")
 if "alert_sent" not in st.session_state:
     st.session_state.alert_sent = False
 
+if "last_alert_time" not in st.session_state:
+    st.session_state.last_alert_time = None
+
 def send_email_alert(theta_value):
     email_user = os.getenv("EMAIL_USER")
     email_pass = os.getenv("EMAIL_PASS")
@@ -247,19 +250,24 @@ if live_mode:
 
         ratio_live = t2_live / t1
         theta_live = abs(ratio_live - phi)
-# ---- Email Alert Hook ----
-        if (
-            recipient_email
-            and theta_live < alert_threshold
-            and not st.session_state.alert_sent
-        ):
-            if send_email_alert(theta_live):
-                st.session_state.alert_sent = True
-                st.success("📧 Alert email sent.")
+        # ---- Hourly Cooldown Email Alert ----
+if recipient_email and theta_live < alert_threshold:
 
-        # Reset alert if Θ goes back above threshold
-        if theta_live >= alert_threshold:
-            st.session_state.alert_sent = False
+    now = datetime.datetime.utcnow()
+
+    send_allowed = False
+
+    if st.session_state.last_alert_time is None:
+        send_allowed = True
+    else:
+        elapsed = (now - st.session_state.last_alert_time).total_seconds()
+        if elapsed >= 3600:  # 1 hour cooldown
+            send_allowed = True
+
+    if send_allowed:
+        if send_email_alert(theta_live):
+            st.session_state.last_alert_time = now
+            st.success("📧 Alert email sent (1-hour cooldown active).")
         # Save history (bounded)
         st.session_state.theta_history.append(theta_live)
         if len(st.session_state.theta_history) > 50:
