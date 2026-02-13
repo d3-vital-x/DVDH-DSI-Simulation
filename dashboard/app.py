@@ -3,6 +3,8 @@
 # Purpose: Diagnostic-only observational geometry analysis
 # License: MIT
 
+import time
+import random
 import streamlit as st
 import datetime
 import math
@@ -167,6 +169,50 @@ st.caption(
     "Ratio panel reports purely mathematical structure. "
     "No physical interpretation is implied."
 )
+
+st.divider()
+st.markdown("### 🔴 LIVE Θ Tracker")
+
+# ---- Live Mode Switch ----
+live_mode = st.toggle("Enable LIVE Θ tracking", value=False)
+
+# ---- Session Init ----
+if "theta_history" not in st.session_state:
+    st.session_state.theta_history = []
+
+live_placeholder = st.empty()
+
+# ---- Live Update Logic ----
+if live_mode:
+    with live_placeholder.container():
+        st.info("LIVE MODE active — updating Θ_obs")
+
+        # Simulated timing drift (replace with real feed later)
+        drift = random.uniform(-0.5, 0.5)
+        t2_live = max(0.1, t2 + drift)
+
+        ratio_live = t2_live / t1
+        theta_live = abs(ratio_live - phi)
+
+        # Save history (bounded)
+        st.session_state.theta_history.append(theta_live)
+        if len(st.session_state.theta_history) > 50:
+            st.session_state.theta_history.pop(0)
+
+        st.metric("LIVE Θ_obs", f"{theta_live:.6f}")
+
+        if theta_live < 0.02:
+            st.success("🟢 Live geometric coherence")
+        elif theta_live < 0.05:
+            st.warning("🟡 Marginal live alignment")
+        else:
+            st.info("🔵 No live alignment")
+
+    time.sleep(1.5)
+    st.rerun()
+
+else:
+    st.caption("LIVE Θ tracker is paused.")
 
 # =============================
 # Footer
