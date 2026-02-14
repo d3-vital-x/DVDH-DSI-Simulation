@@ -110,8 +110,8 @@ if "last_telegram_alert" not in st.session_state:
 # Alert Functions
 # =============================
 def send_email_alert(theta_value):
-    email_user = os.getenv("EMAIL_USER")
-    email_pass = os.getenv("EMAIL_PASS")
+    email_user = st.secrets["EMAIL_USER"]
+    email_pass = st.secrets["EMAIL_PASS"]
 
     if not email_user or not email_pass:
         return False
