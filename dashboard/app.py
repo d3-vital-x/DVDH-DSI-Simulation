@@ -13,6 +13,8 @@ import smtplib
 import ssl
 from email.message import EmailMessage
 from countdown import get_countdown_state
+import requests
+import datetime
 
 # =============================
 # Page Configuration
@@ -162,6 +164,27 @@ No physical claim is implied.
 """
     )
 
+def send_telegram_alert(theta_value):
+    try:
+        token = st.secrets["TELEGRAM_TOKEN"]
+        chat_id = st.secrets["TELEGRAM_CHAT_ID"]
+    except KeyError:
+        return False
+
+    message = f"🚨 LIVE Θ Alert\nΘ_obs = {theta_value:.6f}"
+
+    url = f"https://api.telegram.org/bot{token}/sendMessage"
+
+    try:
+        r = requests.post(
+            url,
+            json={"chat_id": chat_id, "text": message},
+            timeout=2
+        )
+        return r.status_code == 200
+    except:
+        return False
+    
     context = ssl.create_default_context()
 
     try:
@@ -237,6 +260,9 @@ live_mode = st.toggle("Enable LIVE Θ tracking", value=False)
 if "theta_history" not in st.session_state:
     st.session_state.theta_history = []
 
+if "last_telegram_alert" not in st.session_state:
+    st.session_state.last_telegram_alert = None
+
 live_placeholder = st.empty()
 
 # ---- Live Update Logic ----
@@ -273,6 +299,20 @@ if recipient_email and theta_live < alert_threshold:
         if len(st.session_state.theta_history) > 50:
             st.session_state.theta_history.pop(0)
 
+# ---- Telegram Cooldown (60 sec) ----
+if theta_live < alert_threshold:
+
+    now = datetime.datetime.utcnow()
+
+    if (
+        st.session_state.last_telegram_alert is None
+        or (now - st.session_state.last_telegram_alert).total_seconds() >= 60
+    ):
+
+        if send_telegram_alert(theta_live):
+            st.session_state.last_telegram_alert = now
+            st.success("📲 Telegram alert sent.")
+        
         st.metric("LIVE Θ_obs", f"{theta_live:.6f}")
 
         if theta_live < 0.02:
