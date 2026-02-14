@@ -186,7 +186,6 @@ No physical claim is implied.
     except Exception:
         return False
 
-
 def send_telegram_alert(theta_value):
     try:
         token = st.secrets["TELEGRAM_TOKEN"]
@@ -227,7 +226,16 @@ def anchor_theta_locally(theta_value):
         f.write(log_line)
 
     return hash_digest
-    
+
+def verify_anchor_record(timestamp, theta_value, given_hash):
+    """
+    Recomputes SHA256(timestamp|theta_value)
+    Returns True if hash matches, else False
+    """
+    raw_string = f"{timestamp}|{float(theta_value):.6f}"
+    recalculated_hash = hashlib.sha256(raw_string.encode()).hexdigest()
+    return recalculated_hash == given_hash, recalculated_hash
+
 # =============================
 # Ratio Analysis Panel
 # =============================
@@ -348,6 +356,34 @@ if theta_live < alert_threshold:
 else:
     st.caption("LIVE Θ tracker is paused.")
 
+.st.divider()
+st.markdown("### 🔍 SHA256 Anchor Verification Tool")
+
+st.caption("Verify historical Θ anchor records (tamper detection)")
+
+verify_timestamp = st.text_input("Timestamp (ISO format)")
+verify_theta = st.text_input("Θ_obs value")
+verify_hash = st.text_input("Recorded SHA256 hash")
+
+if st.button("Verify Anchor Record"):
+
+    if verify_timestamp and verify_theta and verify_hash:
+
+        is_valid, recalculated = verify_anchor_record(
+            verify_timestamp,
+            verify_theta,
+            verify_hash
+        )
+
+        if is_valid:
+            st.success("✅ Record is VALID. Hash matches.")
+        else:
+            st.error("❌ Record INVALID. Hash mismatch detected.")
+            st.caption(f"Recalculated Hash: {recalculated}")
+
+    else:
+        st.warning("Please fill all fields.")
+        
 # =============================
 # Footer
 # =============================
