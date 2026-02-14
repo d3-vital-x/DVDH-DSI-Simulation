@@ -14,6 +14,7 @@ import ssl
 from email.message import EmailMessage
 from countdown import get_countdown_state
 import requests
+import hashlib
 
 # =============================
 # Page Configuration
@@ -209,6 +210,24 @@ def send_telegram_alert(theta_value):
         st.error(f"Telegram send failed: {e}")
         return False
 
+def anchor_theta_locally(theta_value):
+    """
+    Creates SHA256 hash of (UTC timestamp + theta value)
+    Appends to local log file as immutable record
+    """
+
+    timestamp = datetime.datetime.utcnow().isoformat()
+    raw_string = f"{timestamp}|{theta_value:.6f}"
+
+    hash_digest = hashlib.sha256(raw_string.encode()).hexdigest()
+
+    log_line = f"{timestamp} | {theta_value:.6f} | {hash_digest}\n"
+
+    with open("theta_anchor_log.txt", "a") as f:
+        f.write(log_line)
+
+    return hash_digest
+    
 # =============================
 # Ratio Analysis Panel
 # =============================
@@ -312,7 +331,14 @@ if live_mode:
                     st.session_state.last_telegram_alert = now
                     st.success("📲 Telegram alert sent.")
 
-        # ---- Append history ----
+       # ---- Blockchain Local Anchor ----
+if theta_live < alert_threshold:
+
+    hash_anchor = anchor_theta_locally(theta_live)
+
+    st.caption(f"🔗 SHA256 Anchor: {hash_anchor[:16]}...")
+
+    # ---- Append history ----
         st.session_state.theta_history.append(theta_live)
         if len(st.session_state.theta_history) > 50:
             st.session_state.theta_history.pop(0)
