@@ -120,7 +120,9 @@ with col2:
 
 st.divider()
 
-st.divider()
+# =============================
+# Email Alert Configuration
+# =============================
 st.markdown("### 📧 Email Alert Configuration")
 
 alert_threshold = st.number_input(
@@ -133,17 +135,28 @@ alert_threshold = st.number_input(
 
 recipient_email = st.text_input("Recipient Email")
 
+# ---- Session state init ----
 if "alert_sent" not in st.session_state:
     st.session_state.alert_sent = False
 
 if "last_alert_time" not in st.session_state:
     st.session_state.last_alert_time = None
 
+if "last_telegram_alert" not in st.session_state:
+    st.session_state.last_telegram_alert = None
+
+if "theta_history" not in st.session_state:
+    st.session_state.theta_history = []
+
+# =============================
+# Alert Functions
+# =============================
 def send_email_alert(theta_value):
     email_user = os.getenv("EMAIL_USER")
     email_pass = os.getenv("EMAIL_PASS")
 
     if not email_user or not email_pass:
+        st.error("Email credentials not configured.")
         return False
 
     msg = EmailMessage()
@@ -172,11 +185,13 @@ No physical claim is implied.
     except Exception:
         return False
 
-def def send_telegram_alert(theta_value):
+
+def send_telegram_alert(theta_value):
     try:
         token = st.secrets["TELEGRAM_TOKEN"]
         chat_id = st.secrets["TELEGRAM_CHAT_ID"]
     except KeyError:
+        st.error("Telegram credentials not configured.")
         return False
 
     message = f"🚨 LIVE Θ Alert\nΘ_obs = {theta_value:.6f}"
@@ -190,31 +205,14 @@ def def send_telegram_alert(theta_value):
             timeout=2
         )
         return r.status_code == 200
-    except:
-        return False
-    
-    context = ssl.create_default_context()
-
-    try:
-        with smtplib.SMTP_SSL("smtp.gmail.com", 465, context=context) as server:
-            server.login(email_user, email_pass)
-            server.send_message(msg)
-        return True
     except Exception as e:
-        st.error(f"Email send failed: {e}")
+        st.error(f"Telegram send failed: {e}")
         return False
 
 # =============================
 # Ratio Analysis Panel
 # =============================
 st.subheader("📐 Ratio Structure Panel")
-
-st.markdown(
-    """
-    Ratio diagnostics focus on **spacing structure**,  
-    independent of amplitude or source classification.
-    """
-)
 
 deviation_percent = abs((ratio - phi) / phi) * 100
 
@@ -264,18 +262,10 @@ st.markdown("### 🔴 LIVE Θ Tracker")
 # ---- Live Mode Switch ----
 live_mode = st.toggle("Enable LIVE Θ tracking", value=False)
 
-# ---- Session Init ----
-if "theta_history" not in st.session_state:
-    st.session_state.theta_history = []
-
-if "last_telegram_alert" not in st.session_state:
-    st.session_state.last_telegram_alert = None
-
 live_placeholder = st.empty()
 
 # ---- Live Update Logic ----
 if live_mode:
-
     with live_placeholder.container():
 
         st.info("LIVE MODE active — updating Θ_obs")
@@ -305,7 +295,6 @@ if live_mode:
                 st.session_state.last_alert_time is None
                 or (now - st.session_state.last_alert_time).total_seconds() >= 3600
             ):
-
                 if send_email_alert(theta_live):
                     st.session_state.last_alert_time = now
                     st.success("📧 Alert email sent (1-hour cooldown active).")
@@ -319,14 +308,17 @@ if live_mode:
                 st.session_state.last_telegram_alert is None
                 or (now - st.session_state.last_telegram_alert).total_seconds() >= 60
             ):
-
                 if send_telegram_alert(theta_live):
                     st.session_state.last_telegram_alert = now
                     st.success("📲 Telegram alert sent.")
 
+        # ---- Append history ----
+        st.session_state.theta_history.append(theta_live)
+        if len(st.session_state.theta_history) > 50:
+            st.session_state.theta_history.pop(0)
+
         time.sleep(1.5)
         st.rerun()
-
 else:
     st.caption("LIVE Θ tracker is paused.")
 
