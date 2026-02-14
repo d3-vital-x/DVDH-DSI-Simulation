@@ -14,7 +14,6 @@ import ssl
 from email.message import EmailMessage
 from countdown import get_countdown_state
 import requests
-import datetime
 
 # =============================
 # Page Configuration
@@ -145,7 +144,6 @@ def send_email_alert(theta_value):
     email_pass = os.getenv("EMAIL_PASS")
 
     if not email_user or not email_pass:
-        st.error("Email credentials not configured.")
         return False
 
     msg = EmailMessage()
@@ -164,7 +162,17 @@ No physical claim is implied.
 """
     )
 
-def send_telegram_alert(theta_value):
+    context = ssl.create_default_context()
+
+    try:
+        with smtplib.SMTP_SSL("smtp.gmail.com", 465, context=context) as server:
+            server.login(email_user, email_pass)
+            server.send_message(msg)
+        return True
+    except Exception:
+        return False
+
+def def send_telegram_alert(theta_value):
     try:
         token = st.secrets["TELEGRAM_TOKEN"]
         chat_id = st.secrets["TELEGRAM_CHAT_ID"]
@@ -267,52 +275,18 @@ live_placeholder = st.empty()
 
 # ---- Live Update Logic ----
 if live_mode:
+
     with live_placeholder.container():
+
         st.info("LIVE MODE active — updating Θ_obs")
 
-        # Simulated timing drift (replace with real feed later)
         drift = random.uniform(-0.5, 0.5)
         t2_live = max(0.1, t2 + drift)
 
         ratio_live = t2_live / t1
         theta_live = abs(ratio_live - phi)
-        # ---- Hourly Cooldown Email Alert ----
-if recipient_email and theta_live < alert_threshold:
 
-    now = datetime.datetime.utcnow()
-
-    send_allowed = False
-
-    if st.session_state.last_alert_time is None:
-        send_allowed = True
-    else:
-        elapsed = (now - st.session_state.last_alert_time).total_seconds()
-        if elapsed >= 3600:  # 1 hour cooldown
-            send_allowed = True
-
-    if send_allowed:
-        if send_email_alert(theta_live):
-            st.session_state.last_alert_time = now
-            st.success("📧 Alert email sent (1-hour cooldown active).")
-        # Save history (bounded)
-        st.session_state.theta_history.append(theta_live)
-        if len(st.session_state.theta_history) > 50:
-            st.session_state.theta_history.pop(0)
-
-# ---- Telegram Cooldown (60 sec) ----
-if theta_live < alert_threshold:
-
-    now = datetime.datetime.utcnow()
-
-    if (
-        st.session_state.last_telegram_alert is None
-        or (now - st.session_state.last_telegram_alert).total_seconds() >= 60
-    ):
-
-        if send_telegram_alert(theta_live):
-            st.session_state.last_telegram_alert = now
-            st.success("📲 Telegram alert sent.")
-        
+        # ---- Display always ----
         st.metric("LIVE Θ_obs", f"{theta_live:.6f}")
 
         if theta_live < 0.02:
@@ -322,8 +296,36 @@ if theta_live < alert_threshold:
         else:
             st.info("🔵 No live alignment")
 
-    time.sleep(1.5)
-    st.rerun()
+        # ---- Email Cooldown (1 hour) ----
+        if recipient_email and theta_live < alert_threshold:
+
+            now = datetime.datetime.utcnow()
+
+            if (
+                st.session_state.last_alert_time is None
+                or (now - st.session_state.last_alert_time).total_seconds() >= 3600
+            ):
+
+                if send_email_alert(theta_live):
+                    st.session_state.last_alert_time = now
+                    st.success("📧 Alert email sent (1-hour cooldown active).")
+
+        # ---- Telegram Cooldown (60 sec) ----
+        if theta_live < alert_threshold:
+
+            now = datetime.datetime.utcnow()
+
+            if (
+                st.session_state.last_telegram_alert is None
+                or (now - st.session_state.last_telegram_alert).total_seconds() >= 60
+            ):
+
+                if send_telegram_alert(theta_live):
+                    st.session_state.last_telegram_alert = now
+                    st.success("📲 Telegram alert sent.")
+
+        time.sleep(1.5)
+        st.rerun()
 
 else:
     st.caption("LIVE Θ tracker is paused.")
