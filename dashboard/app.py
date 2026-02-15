@@ -1,5 +1,5 @@
 # DVDH Live Signal Analysis Dashboard
-# Streamlit Optimized Skeleton v1.0
+# Streamlit Optimized Production Version
 # Purpose: Diagnostic-only observational geometry analysis
 # License: MIT
 
@@ -8,13 +8,13 @@ import random
 import streamlit as st
 import datetime
 import math
-import os
 import smtplib
 import ssl
-from email.message import EmailMessage
-from countdown import get_countdown_state
 import requests
 import hashlib
+from email.message import EmailMessage
+from countdown import get_countdown_state
+
 
 # =============================
 # Page Configuration
@@ -38,12 +38,14 @@ No observational or physical claims are asserted.
 
 st.divider()
 
+
 # =============================
-# Countdown
+# Countdown (Cached)
 # =============================
 @st.cache_data(ttl=60)
 def countdown_state_cached():
     return get_countdown_state()
+
 
 st.header("⏳ Observation Countdown")
 state = countdown_state_cached()
@@ -58,8 +60,9 @@ else:
 
 st.divider()
 
+
 # =============================
-# Layout
+# Layout Section
 # =============================
 col1, col2 = st.columns(2)
 
@@ -84,8 +87,9 @@ with col2:
 
 st.divider()
 
+
 # =============================
-# Email Configuration
+# Email Alert Configuration
 # =============================
 st.markdown("### 📧 Email Alert Configuration")
 
@@ -99,31 +103,31 @@ alert_threshold = st.number_input(
 
 recipient_email = st.text_input("Recipient Email")
 
-# Session State Init
 if "last_alert_time" not in st.session_state:
     st.session_state.last_alert_time = None
 
 if "last_telegram_alert" not in st.session_state:
     st.session_state.last_telegram_alert = None
 
+
 # =============================
 # Alert Functions
 # =============================
 def send_email_alert(theta_value):
-    email_user = st.secrets["EMAIL_USER"]
-    email_pass = st.secrets["EMAIL_PASS"]
-
-    if not email_user or not email_pass:
+    try:
+        email_user = st.secrets["EMAIL_USER"]
+        email_pass = st.secrets["EMAIL_PASS"]
+    except KeyError:
         return False
 
     msg = EmailMessage()
     msg["Subject"] = "DVDH LIVE Θ Alert"
     msg["From"] = email_user
     msg["To"] = recipient_email
-
     msg.set_content(f"Θ_obs = {theta_value:.6f}")
 
     context = ssl.create_default_context()
+
     try:
         with smtplib.SMTP_SSL("smtp.gmail.com", 465, context=context) as server:
             server.login(email_user, email_pass)
@@ -145,17 +149,24 @@ def send_telegram_alert(theta_value):
     try:
         r = requests.post(
             url,
-            json={"chat_id": chat_id,
-                  "text": f"🚨 LIVE Θ Alert\nΘ_obs = {theta_value:.6f}"},
-            timeout=2
+            json={
+                "chat_id": chat_id,
+                "text": f"🚨 LIVE Θ Alert\nΘ_obs = {theta_value:.6f}"
+            },
+            timeout=3
         )
         return r.status_code == 200
     except Exception:
         return False
 
 
+# =============================
+# SHA256 Anchor Functions
+# =============================
 def anchor_theta_locally(theta_value):
-    timestamp = datetime.datetime.utcnow().isoformat()
+    timestamp = datetime.datetime.now(datetime.timezone.utc)\
+        .isoformat().replace("+00:00", "Z")
+
     raw = f"{timestamp}|{theta_value:.6f}"
     hash_digest = hashlib.sha256(raw.encode()).hexdigest()
 
@@ -193,9 +204,9 @@ if live_mode:
 
         if theta_live < alert_threshold:
 
-            now = datetime.datetime.utcnow()
+            now = datetime.datetime.now(datetime.timezone.utc)
 
-            # Email Cooldown
+            # Email Cooldown (1 hour)
             if (st.session_state.last_alert_time is None or
                 (now - st.session_state.last_alert_time).total_seconds() >= 3600):
 
@@ -203,7 +214,7 @@ if live_mode:
                     st.session_state.last_alert_time = now
                     st.success("📧 Email sent")
 
-            # Telegram Cooldown
+            # Telegram Cooldown (60 sec)
             if (st.session_state.last_telegram_alert is None or
                 (now - st.session_state.last_telegram_alert).total_seconds() >= 60):
 
@@ -211,7 +222,7 @@ if live_mode:
                     st.session_state.last_telegram_alert = now
                     st.success("📲 Telegram sent")
 
-            # Blockchain Anchor
+            # Anchor locally
             hash_anchor = anchor_theta_locally(theta_live)
             st.caption(f"🔗 SHA256 Anchor: {hash_anchor[:16]}...")
 
@@ -221,8 +232,9 @@ if live_mode:
 else:
     st.caption("LIVE Θ tracker is paused.")
 
+
 # =============================
-# Verification Tool
+# SHA256 Verification Tool
 # =============================
 st.divider()
 st.markdown("### 🔍 SHA256 Anchor Verification Tool")
@@ -249,6 +261,7 @@ if st.button("Verify Anchor Record"):
 
     else:
         st.warning("Please fill all fields.")
+
 
 # =============================
 # Footer
