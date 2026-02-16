@@ -1,10 +1,10 @@
 # DVDH Live Signal Analysis Dashboard
 # Streamlit Optimized Production Version
+# Hybrid Model: φ-weighted Sine + Logistic Map Noise
 # Purpose: Diagnostic-only observational geometry analysis
 # License: MIT
 
 import time
-import random
 import streamlit as st
 import datetime
 import math
@@ -111,6 +111,41 @@ if "last_telegram_alert" not in st.session_state:
 
 
 # =============================
+# Hybrid Drift Engine (φ + Logistic Map)
+# =============================
+if "logistic_x" not in st.session_state:
+    st.session_state.logistic_x = 0.6180339887  # φ-inspired seed
+
+if "time_step" not in st.session_state:
+    st.session_state.time_step = 0
+
+
+def hybrid_drift():
+    """
+    φ-weighted harmonic base + logistic controlled noise
+    """
+
+    phi = (1 + math.sqrt(5)) / 2
+
+    # Harmonic Base (Option C)
+    A = 0.05  # small amplitude for stability
+    t = st.session_state.time_step
+    sine_component = A * math.sin(2 * math.pi * phi * t)
+
+    # Logistic Map Noise (Option D)
+    r = 3.99  # chaotic but bounded
+    x = st.session_state.logistic_x
+    x_next = r * x * (1 - x)
+    st.session_state.logistic_x = x_next
+
+    noise = (x_next - 0.5) * 0.02  # bounded micro-noise ±0.01
+
+    st.session_state.time_step += 1
+
+    return sine_component + noise
+
+
+# =============================
 # Alert Functions
 # =============================
 def send_email_alert(theta_value):
@@ -183,10 +218,10 @@ def verify_anchor_record(timestamp, theta_value, given_hash):
 
 
 # =============================
-# LIVE Θ Tracker
+# LIVE Θ Tracker (Hybrid Engine)
 # =============================
 st.divider()
-st.markdown("### 🔴 LIVE Θ Tracker")
+st.markdown("### 🔴 LIVE Θ Tracker — Hybrid Mode")
 
 live_mode = st.toggle("Enable LIVE Θ tracking", value=False)
 live_placeholder = st.empty()
@@ -194,7 +229,7 @@ live_placeholder = st.empty()
 if live_mode:
     with live_placeholder.container():
 
-        drift = random.uniform(-0.5, 0.5)
+        drift = hybrid_drift()
         t2_live = max(0.1, t2 + drift)
 
         ratio_live = t2_live / t1
@@ -206,7 +241,6 @@ if live_mode:
 
             now = datetime.datetime.now(datetime.timezone.utc)
 
-            # Email Cooldown (1 hour)
             if (st.session_state.last_alert_time is None or
                 (now - st.session_state.last_alert_time).total_seconds() >= 3600):
 
@@ -214,7 +248,6 @@ if live_mode:
                     st.session_state.last_alert_time = now
                     st.success("📧 Email sent")
 
-            # Telegram Cooldown (60 sec)
             if (st.session_state.last_telegram_alert is None or
                 (now - st.session_state.last_telegram_alert).total_seconds() >= 60):
 
@@ -222,7 +255,6 @@ if live_mode:
                     st.session_state.last_telegram_alert = now
                     st.success("📲 Telegram sent")
 
-            # Anchor locally
             hash_anchor = anchor_theta_locally(theta_live)
             st.caption(f"🔗 SHA256 Anchor: {hash_anchor[:16]}...")
 
@@ -266,4 +298,4 @@ if st.button("Verify Anchor Record"):
 # =============================
 # Footer
 # =============================
-st.caption("DVDH–DSI Simulation Project • MIT License • Diagnostic Use Only")
+st.caption("DVDH–DSI Hybrid Simulation Project • MIT License • Diagnostic Use Only")
