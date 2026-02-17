@@ -1,7 +1,6 @@
 # DVDH Live Signal Analysis Dashboard
-# Streamlit Optimized Production Version
+# Production Hardened Version
 # Hybrid Model: φ-weighted Sine + Logistic Map Noise
-# Purpose: Diagnostic-only observational geometry analysis
 # License: MIT
 
 import time
@@ -13,7 +12,13 @@ import ssl
 import requests
 import hashlib
 from email.message import EmailMessage
-from countdown import get_countdown_state
+
+# Optional external module protection
+try:
+    from countdown import get_countdown_state
+    COUNTDOWN_AVAILABLE = True
+except Exception:
+    COUNTDOWN_AVAILABLE = False
 
 
 # =============================
@@ -24,58 +29,62 @@ st.set_page_config(
     layout="wide"
 )
 
-# =============================
-# Header
-# =============================
 st.title("🌌 DVDH Live Signal Analysis Dashboard")
-st.subheader("Transforming Theories, Illuminating Singularities")
+st.subheader("Hybrid Harmonic Diagnostic System")
 
 st.markdown("""
 **Scope Notice**  
 Diagnostic visualization only.  
-No observational or physical claims are asserted.
+No physical or observational claims are asserted.
 """)
 
 st.divider()
 
 
 # =============================
-# Countdown (Cached)
+# Safe Countdown Section
 # =============================
-@st.cache_data(ttl=60)
-def countdown_state_cached():
-    return get_countdown_state()
-
-
 st.header("⏳ Observation Countdown")
-state = countdown_state_cached()
 
-if state["state"] == "PRE_WINDOW":
-    st.metric("Status (UTC)", "PRE-WINDOW",
-              f"{state['days_remaining']} days remaining")
-elif state["state"] == "LIVE_WINDOW":
-    st.success("🟢 Observation window LIVE (15–22 Feb 2026)")
+if COUNTDOWN_AVAILABLE:
+    @st.cache_data(ttl=60)
+    def countdown_state_cached():
+        return get_countdown_state()
+
+    try:
+        state = countdown_state_cached()
+
+        if state["state"] == "PRE_WINDOW":
+            st.metric("Status (UTC)", "PRE-WINDOW",
+                      f"{state['days_remaining']} days remaining")
+        elif state["state"] == "LIVE_WINDOW":
+            st.success("🟢 Observation window LIVE")
+        else:
+            st.info("🔵 Observation window closed")
+
+    except Exception as e:
+        st.warning(f"Countdown error: {e}")
 else:
-    st.info("🔵 Observation window closed")
+    st.info("Countdown module not available.")
 
 st.divider()
 
 
 # =============================
-# Layout Section
+# Core Inputs
 # =============================
 col1, col2 = st.columns(2)
 
 with col1:
-    st.subheader("📊 ΛCDM vs DVDH Accuracy Meter")
+    st.subheader("📊 Accuracy Meter")
     st.progress(0.0)
-    st.caption("Residual-based accuracy comparison (inactive placeholder)")
+    st.caption("Residual placeholder")
 
 with col2:
-    st.subheader("🧭 Θ_obs — DSI Projection Tracker")
+    st.subheader("🧭 Θ_obs Tracker")
 
-    t1 = st.number_input("Δt₁ (ms)", min_value=0.1, value=10.0, step=0.1)
-    t2 = st.number_input("Δt₂ (ms)", min_value=0.1, value=16.0, step=0.1)
+    t1 = st.number_input("Δt₁ (ms)", min_value=0.1, value=10.0)
+    t2 = st.number_input("Δt₂ (ms)", min_value=0.1, value=16.0)
 
     phi = (1 + math.sqrt(5)) / 2
     ratio = t2 / t1 if t1 > 0 else 0.0
@@ -89,145 +98,142 @@ st.divider()
 
 
 # =============================
-# Email Alert Configuration
+# Alert Configuration
 # =============================
-st.markdown("### 📧 Email Alert Configuration")
+st.markdown("### 📧 Alert Configuration")
 
 alert_threshold = st.number_input(
-    "Alert if Θ_obs falls below:",
+    "Alert if Θ_obs below:",
     min_value=0.0001,
     value=0.02,
-    step=0.001,
     format="%.4f"
 )
 
 recipient_email = st.text_input("Recipient Email")
 
-if "last_alert_time" not in st.session_state:
-    st.session_state.last_alert_time = None
+if "last_email" not in st.session_state:
+    st.session_state.last_email = None
 
-if "last_telegram_alert" not in st.session_state:
-    st.session_state.last_telegram_alert = None
+if "last_telegram" not in st.session_state:
+    st.session_state.last_telegram = None
 
 
 # =============================
-# Hybrid Drift Engine (φ + Logistic Map)
+# Hybrid Drift Engine
 # =============================
 if "logistic_x" not in st.session_state:
-    st.session_state.logistic_x = 0.6180339887  # φ-inspired seed
+    st.session_state.logistic_x = 0.6180339887
 
 if "time_step" not in st.session_state:
     st.session_state.time_step = 0
 
 
 def hybrid_drift():
-    """
-    φ-weighted harmonic base + logistic controlled noise
-    """
-
+    A = 0.05
     phi = (1 + math.sqrt(5)) / 2
-
-    # Harmonic Base (Option C)
-    A = 0.05  # small amplitude for stability
     t = st.session_state.time_step
-    sine_component = A * math.sin(2 * math.pi * phi * t)
 
-    # Logistic Map Noise (Option D)
-    r = 3.99  # chaotic but bounded
+    sine_part = A * math.sin(2 * math.pi * phi * t)
+
+    r = 3.99
     x = st.session_state.logistic_x
     x_next = r * x * (1 - x)
     st.session_state.logistic_x = x_next
 
-    noise = (x_next - 0.5) * 0.02  # bounded micro-noise ±0.01
+    noise = (x_next - 0.5) * 0.02
 
     st.session_state.time_step += 1
-
-    return sine_component + noise
+    return sine_part + noise
 
 
 # =============================
-# Alert Functions
+# Safe Email Function
 # =============================
 def send_email_alert(theta_value):
-    try:
-        email_user = st.secrets["EMAIL_USER"]
-        email_pass = st.secrets["EMAIL_PASS"]
-    except KeyError:
+
+    email_user = st.secrets.get("EMAIL_USER")
+    email_pass = st.secrets.get("EMAIL_PASS")
+
+    if not email_user or not email_pass:
+        st.warning("Email credentials not configured.")
+        return False
+
+    if not recipient_email:
         return False
 
     msg = EmailMessage()
-    msg["Subject"] = "DVDH LIVE Θ Alert"
+    msg["Subject"] = "DVDH Θ Alert"
     msg["From"] = email_user
     msg["To"] = recipient_email
-    msg.set_content(f"Θ_obs = {theta_value:.6f}")
-
-    context = ssl.create_default_context()
+    msg.set_content(f"Theta detected: {theta_value:.6f}")
 
     try:
+        context = ssl.create_default_context()
         with smtplib.SMTP_SSL("smtp.gmail.com", 465, context=context) as server:
             server.login(email_user, email_pass)
             server.send_message(msg)
         return True
-    except Exception:
+    except Exception as e:
+        st.error(f"Email error: {e}")
         return False
 
 
+# =============================
+# Safe Telegram Function
+# =============================
 def send_telegram_alert(theta_value):
-    try:
-        token = st.secrets["TELEGRAM_TOKEN"]
-        chat_id = st.secrets["TELEGRAM_CHAT_ID"]
-    except KeyError:
-        return False
 
-    url = f"https://api.telegram.org/bot{token}/sendMessage"
+    token = st.secrets.get("TELEGRAM_TOKEN")
+    chat_id = st.secrets.get("TELEGRAM_CHAT_ID")
+
+    if not token or not chat_id:
+        return False
 
     try:
         r = requests.post(
-            url,
+            f"https://api.telegram.org/bot{token}/sendMessage",
             json={
                 "chat_id": chat_id,
                 "text": f"🚨 LIVE Θ Alert\nΘ_obs = {theta_value:.6f}"
             },
-            timeout=3
+            timeout=5
         )
         return r.status_code == 200
-    except Exception:
+    except Exception as e:
+        st.error(f"Telegram error: {e}")
         return False
 
 
 # =============================
-# SHA256 Anchor Functions
+# Safe SHA256 Anchor
 # =============================
-def anchor_theta_locally(theta_value):
-    timestamp = datetime.datetime.now(datetime.timezone.utc)\
-        .isoformat().replace("+00:00", "Z")
+def anchor_theta(theta_value):
 
-    raw = f"{timestamp}|{theta_value:.6f}"
-    hash_digest = hashlib.sha256(raw.encode()).hexdigest()
+    try:
+        timestamp = datetime.datetime.utcnow().isoformat() + "Z"
+        raw = f"{timestamp}|{theta_value:.6f}"
+        digest = hashlib.sha256(raw.encode()).hexdigest()
 
-    with open("theta_anchor_log.txt", "a") as f:
-        f.write(f"{timestamp} | {theta_value:.6f} | {hash_digest}\n")
+        with open("theta_anchor_log.txt", "a") as f:
+            f.write(f"{timestamp} | {theta_value:.6f} | {digest}\n")
 
-    return hash_digest
-
-
-def verify_anchor_record(timestamp, theta_value, given_hash):
-    raw = f"{timestamp}|{float(theta_value):.6f}"
-    recalculated = hashlib.sha256(raw.encode()).hexdigest()
-    return recalculated == given_hash, recalculated
+        return digest
+    except Exception as e:
+        st.error(f"Anchor write error: {e}")
+        return None
 
 
 # =============================
-# LIVE Θ Tracker (Hybrid Engine)
+# LIVE Tracker
 # =============================
 st.divider()
-st.markdown("### 🔴 LIVE Θ Tracker — Hybrid Mode")
+st.markdown("### 🔴 LIVE Θ Tracker")
 
-live_mode = st.toggle("Enable LIVE Θ tracking", value=False)
-live_placeholder = st.empty()
+live = st.toggle("Enable LIVE tracking", value=False)
+placeholder = st.empty()
 
-if live_mode:
-    with live_placeholder.container():
+if live:
+    with placeholder.container():
 
         drift = hybrid_drift()
         t2_live = max(0.1, t2 + drift)
@@ -239,63 +245,34 @@ if live_mode:
 
         if theta_live < alert_threshold:
 
-            now = datetime.datetime.now(datetime.timezone.utc)
+            now = datetime.datetime.utcnow()
 
-            if (st.session_state.last_alert_time is None or
-                (now - st.session_state.last_alert_time).total_seconds() >= 3600):
+            if (st.session_state.last_email is None or
+               (now - st.session_state.last_email).total_seconds() >= 3600):
 
-                if recipient_email and send_email_alert(theta_live):
-                    st.session_state.last_alert_time = now
-                    st.success("📧 Email sent")
+                if send_email_alert(theta_live):
+                    st.session_state.last_email = now
+                    st.success("Email sent")
 
-            if (st.session_state.last_telegram_alert is None or
-                (now - st.session_state.last_telegram_alert).total_seconds() >= 60):
+            if (st.session_state.last_telegram is None or
+               (now - st.session_state.last_telegram).total_seconds() >= 60):
 
                 if send_telegram_alert(theta_live):
-                    st.session_state.last_telegram_alert = now
-                    st.success("📲 Telegram sent")
+                    st.session_state.last_telegram = now
+                    st.success("Telegram sent")
 
-            hash_anchor = anchor_theta_locally(theta_live)
-            st.caption(f"🔗 SHA256 Anchor: {hash_anchor[:16]}...")
+            hash_val = anchor_theta(theta_live)
+            if hash_val:
+                st.caption(f"SHA256: {hash_val[:16]}...")
 
         time.sleep(1.5)
         st.rerun()
 
 else:
-    st.caption("LIVE Θ tracker is paused.")
-
-
-# =============================
-# SHA256 Verification Tool
-# =============================
-st.divider()
-st.markdown("### 🔍 SHA256 Anchor Verification Tool")
-
-verify_timestamp = st.text_input("Timestamp (ISO format)")
-verify_theta = st.text_input("Θ_obs value")
-verify_hash = st.text_input("Recorded SHA256 hash")
-
-if st.button("Verify Anchor Record"):
-
-    if verify_timestamp and verify_theta and verify_hash:
-
-        valid, recalculated = verify_anchor_record(
-            verify_timestamp,
-            verify_theta,
-            verify_hash
-        )
-
-        if valid:
-            st.success("✅ Record VALID")
-        else:
-            st.error("❌ Hash mismatch detected")
-            st.caption(f"Recalculated: {recalculated}")
-
-    else:
-        st.warning("Please fill all fields.")
+    st.caption("LIVE tracker paused.")
 
 
 # =============================
 # Footer
 # =============================
-st.caption("DVDH–DSI Hybrid Simulation Project • MIT License • Diagnostic Use Only")
+st.caption("DVDH Hybrid Simulation • Production Hardened • MIT License")
